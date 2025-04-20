@@ -13,25 +13,25 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
 3. Let's choose the extensionname for the next steps. To be sure that it will be unique please choose something like [yourgithubusername]-workshop-6
 
-3. You should be in a folder like /workspace-6. Create a new folder called src by typing the following and pressing Enter:
+4. You should be in a folder like /workspace-6. Create a new folder called src by typing the following and pressing Enter:
 
     ```bash
     mkdir src
     ```
 
-4. Next change into the directory by typing the following and pressing Enter:
+5. Next change into the directory by typing the following and pressing Enter:
 
     ```bash
     cd src
     ```
 
-5. In the Terminal window, create a web service project, replacing extensionname with the name of your extension that you defined earlier in step 1.
+6. In the Terminal window, create a web service project, replacing extensionname with the name of your extension that you defined earlier in step 1.
 
     ```bash
     dotnet new web -o extensionname
     ```
 
-6. Next, change into the directory where your source lives (which will be the name of your extension, NOT the word extensionname) by typing the following and pressing Enter:
+7. Next, change into the directory where your source lives (which will be the name of your extension, NOT the word extensionname) by typing the following and pressing Enter:
 
     ```bash
     cd extensionname
@@ -39,7 +39,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     You’ll now add a reference to the [GitHub Octokit](https://www.nuget.org/packages/Octokit) library which makes it easier to work with the GitHub API from C#.
 
-7. Type the following and press Enter:
+8. Type the following and press Enter:
 
     ```bash
     dotnet add package Octokit --version 13.0.1
@@ -47,15 +47,15 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     There are additional Octokit libraries for JavaScript, Ruby, Go, and more. Visit [https://github.com/octokit](https://github.com/octokit) for more information.
 
-8. Open Program.cs from the Explorer.
+9. Open Program.cs from the Explorer.
 
-9. Modify the existing code in line 4 to say “Hello Copilot!” instead of the existing message. The new line should look like as follows:
+10. Modify the existing code in line 4 to say “Hello Copilot!” instead of the existing message. The new line should look like as follows:
 
     ```csharp
     app.MapGet("/", () => "Hello Copilot!");
     ```
 
-10. Create a new record file called Message.cs with the following body:
+11. Create a new record file called Message.cs with the following body:
 
     ```csharp
     public record Message
@@ -67,7 +67,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     Copilot will provide data containing the role (system, assistant, or user) and the message data.
 
-11. Create a new record file called Request.cs with the following body:
+12. Create a new record file called Request.cs with the following body:
 
     ```csharp
     public record Request
@@ -77,7 +77,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     }
     ```
 
-20. Back in Program.cs, add the following using directives to the top of the file:
+13. Back in Program.cs, add the following using directives to the top of the file:
 
     ```csharp
     using Microsoft.AspNetCore.Mvc;
@@ -85,14 +85,14 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     using System.Net.Http.Headers;
     ```
 
-21. Still in Program.cs, add variables with their default values, making sure to replace extensionname with the real name of your extension. You will want this code to be above the line of code that shows app.Run();:
+14. Still in Program.cs, add variables with their default values, making sure to replace extensionname with the real name of your extension. You will want this code to be above the line of code that shows app.Run();:
 
     ```csharp
     string yourGitHubAppName = "extensionname";
     string githubCopilotCompletionsUrl = "https://api.githubcopilot.com/chat/completions";
     ```
 
-22. Still in Program.cs, add the following code to expose an agent endpoint for Copilot to access. You will want this code to be above the line of code that shows app.Run();:
+15. Still in Program.cs, add the following code to expose an agent endpoint for Copilot to access. You will want this code to be above the line of code that shows app.Run();:
 
     ```csharp
     app.MapPost("/agent", async ([FromHeader(Name = "X-GitHub-Token")] string githubToken, [FromBody] Request userRequest) =>
@@ -101,7 +101,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     });
     ```
 
-23. You can make sure you don’t have any typos or errors by going to the Terminal and running the following command:
+16. You can make sure you don’t have any typos or errors by going to the Terminal and running the following command:
 
     ```bash
     dotnet build
@@ -109,7 +109,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     Note, as you complete the rest of the steps, you will use this command to make sure you’ve not made any mistakes.
 
-24. Identify the user using the GitHub API token provided in the request headers.
+17. Identify the user using the GitHub API token provided in the request headers.
 
     ```csharp
     var octokitClient = new GitHubClient(new ProductHeaderValue(yourGitHubAppName))
@@ -119,7 +119,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     var user = await octokitClient.User.Current();
     ```
 
-25. Now it’s time to insert special system messages. The first is to acknowledge the user using their GitHub login handle. The second is to have the extension ‘talk like Blackbeard the Pirate’. You’ll add them in the message list.
+18. Now it’s time to insert special system messages. The first is to acknowledge the user using their GitHub login handle. The second is to have the extension ‘talk like Blackbeard the Pirate’. You’ll add them in the message list.
 
     ```csharp
     userRequest.Messages.Insert(0, new Message
@@ -134,7 +134,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     });
     ```
 
-26. Use the HttpClient class to communicate back to Copilot. To keep the example simple, the code constructs one on every request. This is not optimal for production situations.
+19. Use the HttpClient class to communicate back to Copilot. To keep the example simple, the code constructs one on every request. This is not optimal for production situations.
 
     ```csharp
     var httpClient = new HttpClient();
@@ -142,26 +142,26 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
     userRequest.Stream = true;
     ```
 
-27. Use Copilot's LLM to generate a response to the user's messages.
+20. Use Copilot's LLM to generate a response to the user's messages.
 
     ```csharp
     var copilotLLMResponse = await httpClient.PostAsJsonAsync(githubCopilotCompletionsUrl, userRequest);
     ```
 
-28. The last bit of code needed is to stream the response straight back to the user.
+21. The last bit of code needed is to stream the response straight back to the user.
 
     ```csharp
     var responseStream = await copilotLLMResponse.Content.ReadAsStreamAsync();
     return Results.Stream(responseStream, "application/json");
     ```
 
-29. In order for a user to install your extension as a GitHub app, you need to provide a callback endpoint. Add the following code for the callback endpoint. You will want this code to be above the line of code that shows app.Run();:
+22. In order for a user to install your extension as a GitHub app, you need to provide a callback endpoint. Add the following code for the callback endpoint. You will want this code to be above the line of code that shows app.Run();:
 
     ```csharp
     app.MapGet("/callback", () => "You may close this tab and return to GitHub.com (where you should refresh the page and start a fresh chat). If you're using VS Code or Visual Studio, return there.");
     ```
 
-30. Return to the Terminal window, and run the following command:
+23. Return to the Terminal window, and run the following command:
 
     ```bash
     dotnet build
@@ -169,7 +169,7 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     You should have 0 Warnings and 0 Errors. If you want, you can commit your changes, and optionally push them.
 
-31. In the Terminal run the following command:
+24. In the Terminal run the following command:
 
     ```bash
     dotnet run
@@ -177,23 +177,23 @@ In this workshop you’ll build your first GitHub Copilot Extension as a GitHub 
 
     You will see a message pop up telling you that your application is running. You’ll see two choices. The first is Open in Browser. The second is Make Public.
 
-32. Choose Open in Browser. A new tab will open and you should see your message “Hello Copilot!”
+25. Choose Open in Browser. A new tab will open and you should see your message “Hello Copilot!”
 
     This lets you quickly see that your service works. But, you need to do a bit more configuration before you can test the actual Copilot related code.
 
-34. In the Terminal, press Ctrl+C to stop the app from running.
+26. In the Terminal, press Ctrl+C to stop the app from running.
 
-33. Let's create a dev tunnel to be able to access to our localhost from github. Execute the following command:
+27. Let's create a dev tunnel to be able to access to our localhost from github. Execute the following command:
 
 ```
 code tunnel
 ```
 
-33. Open the like [https://github.com/login/device](https://github.com/login/device) with your browser and type the code from the command line. And authorize it.
+28. Open the like [https://github.com/login/device](https://github.com/login/device) with your browser and type the code from the command line. And authorize it.
 
-33. Navigate to the provided url. This will open VSCode in the brower with the tunnel open.
+29. Navigate to the provided url. This will open VSCode in the brower with the tunnel open.
 
-33. It should propose to install the C# dev kit so please install it.
+30. It should propose to install the C# dev kit so please install it.
 
 31. In the Terminal run the following command:
 
