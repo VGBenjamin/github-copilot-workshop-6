@@ -324,13 +324,6 @@ code tunnel
 
     You will most likely be told “The response was filtered due to the prompt not being programming related. Please modify your prompt and retry.” This is expected as GitHub Copilot is focused on software development workflows and not general Q&A.
 
-67. When you’re done testing, stop your running app.
-
-68. Close your Codespace.
-
-69. Go to [https://github.com/codespaces](https://github.com/codespaces) and stop your codespace.
-
-    And there you have it. Your first GitHub Copilot Extension running as a GitHub App!
 
 ---
 
